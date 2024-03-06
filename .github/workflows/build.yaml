@@ -1,0 +1,34 @@
+name: Build and run tests
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        pip install pipenv pytest pyinstaller
+    - name: Run tests
+      run: |
+        pipenv run pytest --junitxml=pytest_report.xml
+    - name: Publish Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Pytest Report
+        path: pytest_report.xml
+        reporter: junit
+    - name: Build executable
+      run: pipenv run pyinstaller --onefile main.py
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: executable
+        path: dist/main.exe

@@ -1,10 +1,6 @@
-name: Python application
+name: Create release
 on:
   push:
-    branches: [ main ]
-    tags:
-      - "v*"
-  pull_request:
     branches: [ main ]
     tags:
       - "v*"
@@ -19,10 +15,7 @@ jobs:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        pip install pipenv pytest pyinstaller
-    - name: Run tests
-      run: |
-        pipenv run pytest
+        pip install pipenv pyinstaller
     - name: Build executable
       run: pipenv run pyinstaller --onefile main.py
     - name: Create a Release

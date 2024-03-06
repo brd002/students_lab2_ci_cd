@@ -19,3 +19,13 @@ jobs:
     - name: Run tests
       run: |
         pipenv run pytest
+    - name: Build executable
+      run: pyinstaller --onefile main.py
+    - name: Create a Release
+      id: create_release
+      uses: shogo82148/actions-create-release@v1
+    - name: Upload Assets
+      uses: shogo82148/actions-upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/main.exe

@@ -3,7 +3,7 @@ from main import sum_func
 
 
 def data_addition():
-    return (2, 5, 7), (1, 1, 2), (3.1, 3.3, 4.5)  # 3rd is failed
+    return (2, 5, 7), (1, 1, 2), (3.1, 3.3, 6.4)
 
 
 def data_typing():

@@ -24,7 +24,7 @@ jobs:
       with:
         name: Pytest Report
         path: pytest_report.xml
-        reporter: junit
+        reporter: jest-junit
     - name: Build executable
       run: pipenv run pyinstaller --onefile main.py
     - name: Upload build artifact

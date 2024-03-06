@@ -15,12 +15,12 @@ jobs:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        pip install pipenv pytest
+        pip install pipenv pytest pyinstaller
     - name: Run tests
       run: |
         pipenv run pytest
     - name: Build executable
-      run: pyinstaller --onefile main.py
+      run: pipenv run pyinstaller --onefile main.py
     - name: Create a Release
       id: create_release
       uses: shogo82148/actions-create-release@v1

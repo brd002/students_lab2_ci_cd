@@ -19,12 +19,13 @@ jobs:
       run: |
         pipenv run pytest --junitxml=pytest_report.xml
     - name: Publish Test Report
-      uses: dorny/test-reporter@v1
+      uses: pmeier/pytest-results-action@main
       if: always()
       with:
         name: Pytest Report
         path: pytest_report.xml
-        reporter: jest-junit
+        summary: true
+        title: Test results
     - name: Build executable
       run: pipenv run pyinstaller --onefile main.py
     - name: Upload build artifact

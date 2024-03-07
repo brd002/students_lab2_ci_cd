@@ -12,10 +12,10 @@ def data_typing():
 
 @pytest.mark.parametrize("a, b, expected_val", data_addition())
 def test_sum_func(a, b, expected_val):
-        assert sum_func(a, b) == expected_val
+    assert sum_func(a, b) == expected_val
 
 
 @pytest.mark.parametrize("a, b, expected_type", data_typing())
 def test_sum_func_typing(a, b, expected_type):
-        assert type(a) is expected_type
-        assert type(b) is expected_type
+    assert type(a) is expected_type
+    assert type(b) is expected_type

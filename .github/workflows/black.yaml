@@ -29,13 +29,13 @@ jobs:
         path: black_output.txt
     - name: Comment PR
       if: ${{ failure() }}
-      uses: actions/github-script@v5
+      uses: actions/github-script@v7
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
           const fs = require('fs');
           const output = fs.readFileSync('black_output.txt', 'utf8');
-          github.issues.createComment({
+          github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,

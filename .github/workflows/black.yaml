@@ -39,5 +39,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: 'Black formatting check failed:\n```\n' + output + '\n```'
+            body: 'Black formatting check failed:\n```\n' + output.toString() + '\n```'
           });

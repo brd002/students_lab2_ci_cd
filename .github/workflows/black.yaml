@@ -1,0 +1,44 @@
+name: Python Black Formatting Check
+
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  black_check:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install Black
+      run: pip install black
+    - name: Check with Black
+      run: black --check .
+      id: black_check
+      continue-on-error: true
+    - name: Get Black Output
+      if: ${{ failure() }}
+      run: echo "${{ steps.black_check.outputs }}" > black_output.txt
+    - name: Upload Black Output as Artifact
+      uses: actions/upload-artifact@v2
+      if: ${{ failure() }}
+      with:
+        name: black_formatting_issues
+        path: black_output.txt
+    - name: Comment PR
+      if: ${{ failure() }}
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('black_output.txt', 'utf8');
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'Black formatting check failed:\n```\n' + output + '\n```'
+          });

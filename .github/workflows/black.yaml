@@ -36,11 +36,28 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          const fs = require('fs');
-          const output = fs.readFileSync('black_output.txt', 'utf8');
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: 'Black formatting check failed:\n```\n' + output.toString() + '\n```'
-          });
+            const fs = require('fs');
+            const workspacePath = process.env.GITHUB_WORKSPACE;
+            let output = fs.readFileSync('black_output.txt', 'utf8');
+
+            const fileRegex = /would reformat (.*)/g;
+            let match;
+            let files = [];
+            while ((match = fileRegex.exec(output)) !== null) {
+            const filePath = match[1];
+            const relativePath = filePath.replace(workspacePath + '/', '');
+            files.push(relativePath);
+            }
+    
+            const fileList = files.map(file => `  - ${file}`).join('\n');
+
+            const commentBody = files.length > 0 
+            ? 'Black formatting check failed for files:\n' + fileList 
+            : 'Black formatting check passed.';
+    
+            github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: commentBody
+            });

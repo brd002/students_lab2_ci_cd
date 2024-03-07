@@ -52,7 +52,7 @@ jobs:
             const fileList = files.map(file => `  - ${file}`).join('\n');
 
             const commentBody = files.length > 0 
-            ? 'Black formatting check failed for files:\n' + fileList 
+            ? '💥 💔 💥 Black formatting check failed for files: 💥 💔 💥\n' + fileList 
             : 'Black formatting check passed.';
     
             github.rest.issues.createComment({

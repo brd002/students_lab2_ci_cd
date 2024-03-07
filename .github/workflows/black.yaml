@@ -49,11 +49,11 @@ jobs:
             files.push(relativePath);
             }
     
-            const fileList = files.map(file => `  - ${file}`).join('\n');
+            const fileList = files.map(file => `  - 📝 ${file}`).join('\n');
 
             const commentBody = files.length > 0 
             ? '💥 💔 💥 Black formatting check failed for files: 💥 💔 💥\n' + fileList 
-            : 'Black formatting check passed.';
+            : 'Black formatting check failed';
     
             github.rest.issues.createComment({
                 issue_number: context.issue.number,

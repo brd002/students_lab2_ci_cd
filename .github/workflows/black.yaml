@@ -16,11 +16,8 @@ jobs:
     - name: Install Black
       run: pip install black
     - name: Check with Black
-      run: black --check --verbose .
+      run: black --check --verbose . | tee black_output.txt
       id: black_check
-    - name: Get Black Output
-      if: ${{ failure() }}
-      run: echo "${{ steps.black_check.outputs }}" > black_output.txt
     - name: Upload Black Output as Artifact
       uses: actions/upload-artifact@v2
       if: ${{ failure() }}

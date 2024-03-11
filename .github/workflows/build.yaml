@@ -28,7 +28,7 @@ jobs:
         reporter: java-junit 
     - name: Build executable
       run: pipenv run pyinstaller --onefile main.py
-    - name: Upload build artifact
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: executable

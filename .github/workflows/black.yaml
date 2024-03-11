@@ -1,0 +1,63 @@
+name: Python Black Formatting Check
+
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  black_check:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install Black
+      run: pip install black
+    - name: Check with Black
+      run: |
+        output=$(black --check . 2>&1) || exit_code=$?
+        echo "$output" > black_output.txt
+        exit ${exit_code:-0}
+      id: black_check
+    - name: Upload Black Output as Artifact
+      uses: actions/upload-artifact@v2
+      if: ${{ failure() }}
+      with:
+        name: black_formatting_issues
+        path: black_output.txt
+    - name: Print Black Output
+      if: ${{ failure() }}
+      run: cat black_output.txt
+    - name: Comment PR
+      if: ${{ failure() }}
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+            const fs = require('fs');
+            const workspacePath = process.env.GITHUB_WORKSPACE;
+            let output = fs.readFileSync('black_output.txt', 'utf8');
+
+            const fileRegex = /would reformat (.*)/g;
+            let match;
+            let files = [];
+            while ((match = fileRegex.exec(output)) !== null) {
+            const filePath = match[1];
+            const relativePath = filePath.replace(workspacePath + '/', '');
+            files.push(relativePath);
+            }
+    
+            const fileList = files.map(file => `  - 📝 ${file}`).join('\n');
+
+            const commentBody = files.length > 0 
+            ? '💥 💔 💥 Black formatting check failed for files: 💥 💔 💥\n' + fileList 
+            : 'Black formatting check failed';
+    
+            github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: commentBody
+            });
